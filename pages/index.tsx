@@ -1,11 +1,77 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '../styles/Home.module.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import Head from "next/head";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [testCases, setTestCases] = useState<any>([]);
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    const files = e.target.files;
+    reader.onload = async (event) => {
+      const data = test(event.target?.result);
+      console.log(data);
+      setTestCases(data);
+    };
+
+    if (files === null) return;
+
+    reader.readAsText(files[0]);
+  };
+
+  function test(str: string | ArrayBuffer | null | undefined) {
+    if (str === null || str === undefined || typeof str !== "string") return;
+
+    const line = str.split(/\n/);
+
+    const testcases = [];
+    for (const l of line) {
+      if (l.trim() === "") break;
+
+      const x = l.split(/(\s+)/).filter((e) => e.trim().length > 0);
+      const gpa = parseFloat(x[0]);
+      const credit = parseInt(x[1]);
+      const expected = x[2];
+
+      let actual = "F";
+
+      // check gpa and credit is correct
+      if (gpa >= 0 && gpa <= 4 && credit >= 0 && credit <= 134) {
+        actual = "P";
+      }
+
+      const result = actual === expected ? "TestPass" : "TestFail";
+
+      testcases.push({
+        author: "non",
+        gpa,
+        credit,
+        expected,
+        actual,
+        result,
+      });
+    }
+
+    fetch("/api/test", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        testcases,
+      }),
+    });
+
+    return testcases;
+  }
+
+  useEffect(() => {
+    console.log(testCases);
+  }, [testCases]);
+
+  const handleAdd = () => {
+    setTestCases([...testCases, Math.round(Math.random() * 100)]);
+  };
+
   return (
     <>
       <Head>
@@ -14,110 +80,49 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
+      <main className="flex flex-col w-full items-center">
+        <h1 className="text-3xl font-bold m-10">Select file to test</h1>
+        <input type="file" onChange={handleFileInput} />
+
+        {testCases.length !== 0 && (
+          <div className="m-10 flex flex-col gap-2">
+            <p>Name: Weerawong Vonggatunyu</p>
+            <p>Date: {new Date().toDateString()}</p>
+            <table className="table-auto">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 ">gpa</th>
+                  <th className="px-4 py-2 ">credit</th>
+                  <th className="px-4 py-2 ">actual</th>
+                  <th className="px-4 py-2 ">expected</th>
+                  <th className="px-4 py-2 ">result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {testCases.map((testcase: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="border px-4 py-2  font-medium">
+                      {testcase.gpa}
+                    </td>
+                    <td className="border px-4 py-2  font-medium">
+                      {testcase.credit}
+                    </td>
+                    <td className="border px-4 py-2  font-medium">
+                      {testcase.actual}
+                    </td>
+                    <td className="border px-4 py-2  font-medium">
+                      {testcase.expected}
+                    </td>
+                    <td className="border px-4 py-2  font-medium">
+                      {testcase.result}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
+        )}
       </main>
     </>
-  )
+  );
 }
