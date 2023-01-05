@@ -12,12 +12,14 @@ export default async function handler(
     const { testcases } = req.body;
 
     // clean up data
-    await prisma.testGPA.deleteMany();
+    await prisma.testResult.deleteMany();
 
-    await prisma.testGPA.createMany({
+    await prisma.testResult.createMany({
       data: [...testcases],
     });
+
+    return res.status(201).send("");
   }
 
-  // res.status(200).json({ name: "John Doe" });
+  return res.send("Method not allowed.");
 }

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React, { useState } from "react";
+import TestResult from "../components/TestResult";
 
 function test(str: string | ArrayBuffer | null | undefined, name: string) {
   if (str === null || str === undefined || typeof str !== "string") return;
@@ -42,7 +43,7 @@ function test(str: string | ArrayBuffer | null | undefined, name: string) {
     body: JSON.stringify({
       testcases,
     }),
-  });
+  }).catch((err) => console.error(err));
 
   return testcases;
 }
@@ -69,6 +70,8 @@ export default function Home() {
     };
     if (!file) return;
     reader.readAsText(file);
+
+    // document.getElementById("inputName")?.nodeValue = ""
   };
 
   return (
@@ -83,14 +86,26 @@ export default function Home() {
         <h1 className="text-3xl font-bold m-10 non-printable">
           Select file to test
         </h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="non-printable">
           <label>Run by</label>
           <input
             placeholder="name"
             className="p-3 border w-full rounded-lg mt-2 mb-3"
             onChange={(e) => setName(e.target.value)}
+            id="inputName"
             required
           />
+          <label>Select Test</label>
+          <select
+            id="cars"
+            name="test"
+            className="p-3 border border-neutral-300 rounded-full ml-3 mb-3 cursor-pointer"
+          >
+            <option value="bva">BVA</option>
+            <option value="robustness">Robustness</option>
+            <option value="wc_bva">Worst case BVA</option>
+            <option value="wc_robustness">Worst case Robustness</option>
+          </select>
           <input
             type="file"
             onChange={handleFileInput}
@@ -99,12 +114,12 @@ export default function Home() {
       file:rounded-full file:border-0
       file:text-sm file:font-semibold
       file:bg-violet-50 file:text-violet-700
-      hover:file:bg-violet-100 file:cursor-pointer file:duration-300 non-printable"
+      hover:file:bg-violet-100 file:cursor-pointer file:duration-300 block"
             required
           />
           <button
             type="submit"
-            className="mt-3 p-3 rounded-md bg-purple-100 hover:bg-purple-200 duration-300 text-purple-700 text-semibold non-printable"
+            className="mt-3 p-3 rounded-md bg-purple-100 hover:bg-purple-200 duration-300 text-purple-700 text-semibold block mx-auto"
           >
             Run Test
           </button>
@@ -112,44 +127,7 @@ export default function Home() {
 
         {testCases.length !== 0 && (
           <>
-            <div className="m-10 flex flex-col gap-2 border p-5 max-w-2xl rounded-md shadow-md printable">
-              <h2 className="text-xl font-semibold">Test Result</h2>
-              <p>Run By: {name}</p>
-              <p>Date: {new Date().toUTCString().slice(0, -3)}</p>
-              <table className="table-auto">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2 ">gpa</th>
-                    <th className="px-4 py-2 ">credit</th>
-                    <th className="px-4 py-2 ">actual</th>
-                    <th className="px-4 py-2 ">expected</th>
-                    <th className="px-4 py-2 ">result</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {testCases.map((testcase: any, idx: number) => (
-                    <tr key={idx}>
-                      <td className="border px-4 py-2  font-medium">
-                        {testcase.gpa}
-                      </td>
-                      <td className="border px-4 py-2  font-medium">
-                        {testcase.credit}
-                      </td>
-                      <td className="border px-4 py-2  font-medium">
-                        {testcase.actual}
-                      </td>
-                      <td className="border px-4 py-2  font-medium">
-                        {testcase.expected}
-                      </td>
-                      <td className="border px-4 py-2  font-medium">
-                        {testcase.result}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
+            <TestResult testCases={testCases} name={name} />
             <button
               className="mb-10 p-3 rounded-md bg-purple-100 hover:bg-purple-200 duration-300 text-purple-700 text-semibold non-printable"
               onClick={() => print()}
