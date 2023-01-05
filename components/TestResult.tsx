@@ -11,10 +11,10 @@ export default function TestResult({
   name,
 }: {
   testCases: Props[];
-  name: string;
+  name: string | undefined;
 }) {
   return (
-    <div className="m-10 flex flex-col gap-2 border p-5 max-w-2xl rounded-md shadow-md printable">
+    <div className="m-10 flex flex-col gap-2 border p-5 w-full max-w-2xl rounded-md shadow-md print:max-w-none print:border-none print:shadow-none">
       <h2 className="text-xl font-semibold">Test Result</h2>
       <p>Run By: {name}</p>
       <p>Date: {new Date().toString().slice(0, -26)}</p>
