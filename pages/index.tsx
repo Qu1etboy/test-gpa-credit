@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import TestResult from "../components/TestResult";
 
 function runTest(data: any, name: any) {
@@ -33,12 +33,6 @@ export default function Home() {
     setTestCases(runTest(data, nameInput.current?.value));
     setName(nameInput.current?.value);
   };
-
-  useEffect(() => {
-    fetch(`/api/test/bva`)
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }, []);
 
   return (
     <>

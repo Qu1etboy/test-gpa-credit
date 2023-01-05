@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,8 +7,6 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     const { name } = req.query;
-
-    const prisma = new PrismaClient();
 
     try {
       const input = await prisma.test.findUnique({
