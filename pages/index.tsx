@@ -1,78 +1,44 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TestResult from "../components/TestResult";
 
-function test(str: string | ArrayBuffer | null | undefined, name: string) {
-  if (str === null || str === undefined || typeof str !== "string") return;
+function runTest(data: any, name: any) {
+  const result = data.input.map((v: any) => {
+    const actual =
+      v.gpa >= 0 && v.gpa <= 4 && v.credit >= 0 && v.credit <= 134 ? "P" : "F";
+    const result = actual === v.expected ? "TestPass" : "TestFail";
 
-  const line = str.split(/\n/);
+    return { ...v, actual, result };
+  });
 
-  const testcases = [];
-  for (const l of line) {
-    if (l.trim() === "") break;
-
-    const x = l.split(/(\s+)/).filter((e) => e.trim().length > 0);
-    const gpa = parseFloat(x[0]);
-    const credit = parseInt(x[1]);
-    const expected = x[2];
-
-    let actual = "F";
-
-    // check gpa and credit is correct
-    if (gpa >= 0 && gpa <= 4 && credit >= 0 && credit <= 134) {
-      actual = "P";
-    }
-
-    const result = actual === expected ? "TestPass" : "TestFail";
-
-    testcases.push({
-      author: name,
-      gpa,
-      credit,
-      expected,
-      actual,
-      result,
-    });
-  }
-
-  fetch("/api/test", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      testcases,
-    }),
-  }).catch((err) => console.error(err));
-
-  return testcases;
+  return result;
 }
 
 export default function Home() {
+  const nameInput = useRef<HTMLInputElement>(null);
+  const selectTest = useRef<HTMLSelectElement>(null);
+
   const [testCases, setTestCases] = useState<any>([]);
-  const [name, setName] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [name, setName] = useState<any>("");
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    setFile(files[0]);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const data = test(event.target?.result, name);
-      console.log(data);
-      setTestCases(data);
-    };
-    if (!file) return;
-    reader.readAsText(file);
+    console.log(nameInput.current?.value);
+    console.log(selectTest.current?.value);
 
-    // document.getElementById("inputName")?.nodeValue = ""
+    const res = await fetch(`/api/test/${selectTest.current?.value}`);
+    const data = await res.json();
+
+    setTestCases(runTest(data, nameInput.current?.value));
+    setName(nameInput.current?.value);
   };
+
+  useEffect(() => {
+    fetch(`/api/test/bva`)
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+  }, []);
 
   return (
     <>
@@ -84,15 +50,15 @@ export default function Home() {
       </Head>
       <main className="flex flex-col w-full items-center">
         <h1 className="text-3xl font-bold m-10 non-printable">
-          Select file to test
+          Test GPA and Credit
         </h1>
         <form onSubmit={handleSubmit} className="non-printable">
           <label>Run by</label>
           <input
             placeholder="name"
             className="p-3 border w-full rounded-lg mt-2 mb-3"
-            onChange={(e) => setName(e.target.value)}
             id="inputName"
+            ref={nameInput}
             required
           />
           <label>Select Test</label>
@@ -100,23 +66,14 @@ export default function Home() {
             id="cars"
             name="test"
             className="p-3 border border-neutral-300 rounded-full ml-3 mb-3 cursor-pointer"
+            ref={selectTest}
           >
             <option value="bva">BVA</option>
             <option value="robustness">Robustness</option>
             <option value="wc_bva">Worst case BVA</option>
             <option value="wc_robustness">Worst case Robustness</option>
           </select>
-          <input
-            type="file"
-            onChange={handleFileInput}
-            className="text-sm text-slate-500
-      file:mr-4 file:py-2 file:px-4
-      file:rounded-full file:border-0
-      file:text-sm file:font-semibold
-      file:bg-violet-50 file:text-violet-700
-      hover:file:bg-violet-100 file:cursor-pointer file:duration-300 block"
-            required
-          />
+
           <button
             type="submit"
             className="mt-3 p-3 rounded-md bg-purple-100 hover:bg-purple-200 duration-300 text-purple-700 text-semibold block mx-auto"

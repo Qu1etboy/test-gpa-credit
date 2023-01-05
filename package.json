@@ -2,7 +2,7 @@
   "name": "testing-script",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "prisma": {
     "seed": "node prisma/seed.js"
   },

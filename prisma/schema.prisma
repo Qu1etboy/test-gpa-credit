@@ -11,7 +11,7 @@ datasource db {
 }
 
 model TestResult {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   author    String
   gpa       Float
   credit    Int
@@ -22,16 +22,16 @@ model TestResult {
 }
 
 model Test {
-  id    String  @id @default(uuid())
+  id    Int     @id @default(autoincrement())
   name  String  @unique
   input Input[]
 }
 
 model Input {
-  id       String  @id @default(uuid())
+  id       Int    @id @default(autoincrement())
   gpa      Float
   credit   Int
   expected String
-  Test     Test?   @relation(fields: [testId], references: [id])
-  testId   String?
+  Test     Test?  @relation(fields: [testId], references: [id])
+  testId   Int?
 }
