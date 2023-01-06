@@ -8,13 +8,27 @@ export default async function handler(
   if (req.method === "POST") {
     console.log("here");
 
-    const { testcases } = req.body;
+    const { testcases, author, testName } = req.body;
 
-    // clean up data
-    await prisma.testResult.deleteMany();
+    console.log(testcases, author, testName);
 
-    await prisma.testResult.createMany({
-      data: [...testcases],
+    await prisma.testResult.create({
+      data: {
+        testName: testName,
+        author: author,
+        outputs: {
+          create: testcases.map((testcase: any) => {
+            // exclude id and testId
+            return {
+              gpa: testcase.gpa,
+              credit: testcase.credit,
+              expected: testcase.expected,
+              actual: testcase.actual,
+              result: testcase.result,
+            };
+          }),
+        },
+      },
     });
 
     return res.status(201).send("");
