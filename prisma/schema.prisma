@@ -12,13 +12,21 @@ datasource db {
 
 model TestResult {
   id        Int      @id @default(autoincrement())
+  testName  String
   author    String
-  gpa       Float
-  credit    Int
-  actual    String
-  expected  String
-  result    String
   createdAt DateTime @default(now())
+  outputs   Output[]
+}
+
+model Output {
+  id           Int         @id @default(autoincrement())
+  gpa          Float
+  credit       Int
+  actual       String
+  expected     String
+  result       String
+  TestResult   TestResult? @relation(fields: [testResultId], references: [id])
+  testResultId Int?
 }
 
 model Test {
