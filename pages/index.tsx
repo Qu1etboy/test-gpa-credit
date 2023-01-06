@@ -21,13 +21,29 @@ type Test = {
   name: string;
 };
 
-function runTest(test: Test, name: string | undefined): Result[] {
+function runTest(
+  test: Test,
+  name: string | undefined,
+  testName: string | undefined
+): Result[] {
   const result: Result[] = test.input.map((v: any) => {
     const actual =
       v.gpa >= 0 && v.gpa <= 4 && v.credit >= 0 && v.credit <= 134 ? "P" : "F";
     const result = actual === v.expected ? "TestPass" : "TestFail";
 
     return { ...v, actual, result };
+  });
+
+  const output = { testcases: result, author: name, testName: testName };
+
+  console.log(output);
+
+  fetch("/api/test", {
+    method: "POST",
+    body: JSON.stringify(output),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   return result;
@@ -46,7 +62,9 @@ export default function Home() {
     const res = await fetch(`/api/test/${selectTest.current?.value}`);
     const data = await res.json();
 
-    setTestCases(runTest(data, nameInput.current?.value));
+    setTestCases(
+      runTest(data, nameInput.current?.value, selectTest.current?.value)
+    );
     setName(nameInput.current?.value);
   };
 
