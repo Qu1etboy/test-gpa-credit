@@ -1,32 +1,14 @@
 import Head from "next/head";
 import React, { useRef, useState } from "react";
-import TestResult from "../components/TestResult";
-
-type Input = {
-  id: number;
-  gpa: number;
-  credit: number;
-  expected: string;
-  testId: number;
-};
-
-type Result = Input & {
-  actual: string;
-  result: string;
-};
-
-type Test = {
-  id: number;
-  input: Input[];
-  name: string;
-};
+import TestResultCard from "../components/TestResultCard";
+import type { Output, Test } from "../lib/types";
 
 function runTest(
   test: Test,
   name: string | undefined,
   testName: string | undefined
-): Result[] {
-  const result: Result[] = test.input.map((v: any) => {
+): Output[] {
+  const result: Output[] = test.input.map((v: any) => {
     const actual =
       v.gpa >= 0 && v.gpa <= 4 && v.credit >= 0 && v.credit <= 134 ? "P" : "F";
     const result = actual === v.expected ? "TestPass" : "TestFail";
@@ -53,7 +35,7 @@ export default function Home() {
   const nameInput = useRef<HTMLInputElement>(null);
   const selectTest = useRef<HTMLSelectElement>(null);
 
-  const [testCases, setTestCases] = useState<Result[]>([]);
+  const [testCases, setTestCases] = useState<Output[]>([]);
   const [name, setName] = useState<string | undefined>("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -115,7 +97,7 @@ export default function Home() {
 
         {testCases.length !== 0 && (
           <>
-            <TestResult testCases={testCases} name={name} />
+            <TestResultCard testCases={testCases} name={name} />
             <button
               className="mb-10 p-3 rounded-md bg-purple-100 hover:bg-purple-200 duration-300 text-purple-700 text-semibold print:hidden"
               onClick={() => print()}
