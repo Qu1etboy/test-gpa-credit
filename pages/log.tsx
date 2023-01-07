@@ -8,13 +8,13 @@ export default function Log({ testResults }: { testResults: TestResult[] }) {
       <main>
         <Navbar />
         <h1 className="text-3xl font-bold text-center mt-5">Test Log</h1>
-        <table className="table-auto mx-auto mt-10">
+        <table className="table-auto mx-auto mt-10 w-full max-w-2xl">
           <thead>
             <tr>
-              <th className="px-4 py-2">id</th>
-              <th className="px-4 py-2">author</th>
-              <th className="px-4 py-2">test name</th>
-              <th className="px-4 py-2">detail</th>
+              <th className="px-4 py-2 border bg-purple-50">id</th>
+              <th className="px-4 py-2 border bg-purple-50">author</th>
+              <th className="px-4 py-2 border bg-purple-50">test name</th>
+              <th className="px-4 py-2 border bg-purple-50">detail</th>
             </tr>
           </thead>
           <tbody>
@@ -23,7 +23,7 @@ export default function Log({ testResults }: { testResults: TestResult[] }) {
                 <td className="px-4 py-2 border">{testResult.id}</td>
                 <td className="px-4 py-2 border">{testResult.author}</td>
                 <td className="px-4 py-2 border">{testResult.testName}</td>
-                <td className="px-4 py-2 border">
+                <td className="px-4 py-2 border text-center">
                   <Link
                     href={`test/${testResult.id}`}
                     className="underline text-blue-500"

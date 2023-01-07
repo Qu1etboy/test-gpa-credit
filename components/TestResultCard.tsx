@@ -43,11 +43,11 @@ export default function TestResult(props: Props) {
       <table className="table-auto">
         <thead>
           <tr>
-            <th className="px-4 py-2 ">gpa</th>
-            <th className="px-4 py-2 ">credit</th>
-            <th className="px-4 py-2 ">actual</th>
-            <th className="px-4 py-2 ">expected</th>
-            <th className="px-4 py-2 ">result</th>
+            <th className="px-4 py-2 border bg-purple-50">gpa</th>
+            <th className="px-4 py-2 border bg-purple-50">credit</th>
+            <th className="px-4 py-2 border bg-purple-50">actual</th>
+            <th className="px-4 py-2 border bg-purple-50">expected</th>
+            <th className="px-4 py-2 border bg-purple-50">result</th>
           </tr>
         </thead>
         <tbody>
