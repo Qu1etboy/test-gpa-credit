@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React, { useRef, useState } from "react";
+import Navbar from "../components/Navbar";
 import TestResultCard from "../components/TestResultCard";
 import type { Output, Test } from "../lib/types";
 
@@ -18,7 +19,7 @@ function runTest(
 
   const output = { testcases: result, author: name, testName: testName };
 
-  console.log(output);
+  // console.log(output);
 
   fetch("/api/test", {
     method: "POST",
@@ -62,6 +63,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col w-full items-center">
+        <Navbar />
         <h1 className="text-3xl font-bold m-10 print:hidden">
           Test GPA and Credit
         </h1>

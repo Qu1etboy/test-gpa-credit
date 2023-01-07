@@ -1,10 +1,12 @@
 import Link from "next/link";
 import type { TestResult } from "@prisma/client";
+import Navbar from "../components/Navbar";
 
 export default function Log({ testResults }: { testResults: TestResult[] }) {
   return (
     <>
       <main>
+        <Navbar />
         <h1 className="text-3xl font-bold text-center mt-5">Test Log</h1>
         <table className="table-auto mx-auto mt-10">
           <thead>
