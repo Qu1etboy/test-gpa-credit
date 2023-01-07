@@ -19,8 +19,6 @@ function runTest(
 
   const output = { testcases: result, author: name, testName: testName };
 
-  // console.log(output);
-
   fetch("/api/test", {
     method: "POST",
     body: JSON.stringify(output),

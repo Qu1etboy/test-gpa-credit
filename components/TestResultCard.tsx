@@ -36,8 +36,9 @@ export default function TestResult(props: Props) {
       <p>Run By: {name}</p>
       <p>
         Date:{" "}
-        {new Date(date as Date).toString().slice(0, -26) ??
-          new Date().toString().slice(0, -26)}
+        {date
+          ? new Date(date as Date).toString().slice(0, -26)
+          : new Date().toString().slice(0, -26)}
       </p>
       <table className="table-auto">
         <thead>
